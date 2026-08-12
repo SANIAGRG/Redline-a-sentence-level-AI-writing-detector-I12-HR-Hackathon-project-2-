@@ -1,0 +1,61 @@
+[project]
+name = "redline"
+version = "0.1.0"
+description = "Redline — a sentence-level AI-writing detector that shows its evidence."
+requires-python = ">=3.11"
+readme = "README.md"
+
+dependencies = [
+    "torch",
+    "transformers",
+    "spacy",
+    "lightgbm",
+    "gradio",
+    "ruptures",
+    "sentence-transformers",
+    "scikit-learn",
+    "pydantic",
+    "pydantic-settings",
+    "pandas",
+    "pyarrow",
+    "matplotlib",
+    "PyYAML",
+    "ollama",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "N", "SIM"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+explicit_package_bases = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

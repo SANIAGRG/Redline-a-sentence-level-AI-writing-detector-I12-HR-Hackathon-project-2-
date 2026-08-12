@@ -1,0 +1,30 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+polish_run.log
+.claude/
+
+# The build spec is the user's private planning doc — never committed.
+REDLINE_SPEC.md
+
+# Large/derived data — never committed. dataset/raw/ is user-provided and
+# read-only; everything under interim/generated/features is regenerable
+# via `make join` / `make generate` / `make features`.
+dataset/raw/*.csv
+dataset/interim/
+dataset/generated/
+dataset/features/
+
+# Ollama logs and scratch files from local runs
+.ollama_serve.log
+.resumability_test.log
+ollama_pull.log
+
+# Model artifacts
+*.pt
+*.pkl
+*.joblib

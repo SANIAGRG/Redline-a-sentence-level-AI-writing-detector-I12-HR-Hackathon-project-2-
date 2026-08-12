@@ -1,0 +1,52 @@
+# Redline default configuration. See src/detector/config.py for schema and validation.
+
+paths:
+  raw: dataset/raw
+  interim: dataset/interim
+  generated: dataset/generated
+  features: dataset/features
+
+ollama:
+  host: http://localhost:11434
+  models:
+    - llama3.2:3b
+    - gemma2:2b
+    - phi3.5:3.8b
+  num_parallel: 1
+  max_loaded_models: 1
+  num_ctx: 2048
+  keep_alive: 30m
+
+sampling:
+  seed: 42
+  ell_target_ratio: 0.5
+  pools:
+    - name: human_baseline
+      count: 4000
+      purpose: stylometric z-score baseline
+    - name: human_training
+      count: 600
+      purpose: ELL-balanced, goes through scorer
+    - name: machine_training
+      count: 700
+      purpose: 2023-era DAIGT families
+    - name: machine_heldout_family
+      count: 150
+      purpose: one DAIGT family excluded from training
+    - name: machine_modern
+      count: 150
+      purpose: Module 3 modern-generator slice
+    - name: polished_mixed
+      count: 350
+      purpose: Module 3 polish/mixed corpus
+    - name: adversarial
+      count: 100
+      purpose: eval-only, paraphrase + typo injection
+
+scorer:
+  base_model: Qwen/Qwen2.5-0.5B
+  instruct_model: Qwen/Qwen2.5-0.5B-Instruct
+
+decision:
+  operating_point: tpr_at_1pct_fpr
+  min_words_for_verdict: 150
