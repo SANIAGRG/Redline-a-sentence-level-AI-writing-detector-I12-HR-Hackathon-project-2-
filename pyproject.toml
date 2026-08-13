@@ -21,6 +21,7 @@ dependencies = [
     "matplotlib",
     "PyYAML",
     "ollama",
+    "pyspellchecker",
 ]
 
 [project.optional-dependencies]
@@ -44,7 +45,7 @@ select = ["E", "F", "I", "UP", "B", "N", "SIM"]
 ignore = []
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 mypy_path = "src"
 explicit_package_bases = true
 ignore_missing_imports = true

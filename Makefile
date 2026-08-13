@@ -1,4 +1,4 @@
-.PHONY: setup lint test join generate features train eval app clean
+.PHONY: setup lint test join sample generate stylometric features train eval app clean
 
 PYTHON := .venv/Scripts/python.exe
 PIP := .venv/Scripts/pip.exe
@@ -19,12 +19,17 @@ test:
 join:
 	$(PYTHON) -m detector.ingest.join_ell
 
+sample:
+	$(PYTHON) -m detector.ingest.build_corpus
+
 generate:
 	$(PYTHON) -m detector.generate.run_polish
 	$(PYTHON) -m detector.generate.run_modern
 
-features:
-	$(PYTHON) -m detector.features.build_all
+stylometric:
+	$(PYTHON) -m detector.features.build_baseline
+
+features: stylometric
 
 train:
 	$(PYTHON) -m detector.model.train

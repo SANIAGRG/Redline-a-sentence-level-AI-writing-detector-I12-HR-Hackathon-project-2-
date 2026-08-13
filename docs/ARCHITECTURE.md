@@ -55,4 +55,11 @@ go/no-go threshold, so ELLIPSE was not downloaded.
 
 - **Module 1 (done):** repo scaffolding, config loading, ELL join,
   Ollama models pulled, polish runner running and resumability-verified.
-- Modules 2-7: not started.
+- **Module 2 (done):** sampling (`src/detector/ingest/sampling.py`),
+  manifest (`manifest.py`), sentence/paragraph segmentation
+  (`segmentation.py`), topic-distribution check (`topic_check.py`),
+  stylometric feature layer (`src/detector/features/stylometric.py`).
+  See `docs/DATA_CARD.md` for the sampling story, including a real
+  topic-skew bug found and fixed via topic-stratified sampling.
+- Modules 3B/3C, 4-7: not started. (3A, the polish corpus, was
+  completed early in Module 1 per H3.)
