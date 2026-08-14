@@ -19,7 +19,7 @@ PERSUADE_LICENSE = "PERSUADE 2.0: CC BY-NC-SA 4.0"
 DAIGT_LICENSE = "DAIGT-V2 (Kaggle): confirmed usable -- see DATA_CARD.md"
 
 # source -> human-readable generator name, for manifest readability.
-_GENERATOR_NAMES: dict[str, str] = {
+GENERATOR_NAMES: dict[str, str] = {
     "mistral7binstruct_v2": "Mistral-7B-Instruct v2",
     "mistral7binstruct_v1": "Mistral-7B-Instruct v1",
     "mistralai/Mistral-7B-Instruct-v0.1": "Mistral-7B-Instruct v0.1",
@@ -59,7 +59,7 @@ def _human_rows(df: pd.DataFrame, pool: str) -> pd.DataFrame:
 def _machine_rows(df: pd.DataFrame, pool: str) -> pd.DataFrame:
     doc_id = df["source"].astype(str) + "::" + df.index.astype(str)
     word_count = df["text"].map(lambda t: len(str(t).split()))
-    generator = df["source"].map(lambda s: _GENERATOR_NAMES.get(s, s))
+    generator = df["source"].map(lambda s: GENERATOR_NAMES.get(s, s))
     return pd.DataFrame(
         {
             "doc_id": doc_id.values,

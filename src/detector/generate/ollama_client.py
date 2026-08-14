@@ -10,6 +10,7 @@ from __future__ import annotations
 import ollama
 
 from detector.config import OllamaConfig
+from detector.generate.text_cleanup import strip_llm_preamble
 
 
 class OllamaClient:
@@ -24,4 +25,4 @@ class OllamaClient:
             options={"num_ctx": self._config.num_ctx},
             keep_alive=self._config.keep_alive,
         )
-        return str(response["response"]).strip()
+        return strip_llm_preamble(str(response["response"]).strip())

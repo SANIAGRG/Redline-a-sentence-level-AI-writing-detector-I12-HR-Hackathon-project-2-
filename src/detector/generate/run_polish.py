@@ -23,11 +23,11 @@ import logging
 import random
 import sys
 from dataclasses import dataclass
-from pathlib import Path
 
 import pandas as pd
 
 from detector.config import RedlineConfig, load_config
+from detector.generate.checkpoint import append_checkpoint, load_checkpoint
 from detector.generate.ollama_client import OllamaClient
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -37,6 +37,7 @@ POLISH_MODEL = "llama3.2:3b"
 INTENSITIES = ("grammar", "flow", "rewrite")
 MIN_WORD_COUNT = 200  # need multiple real paragraphs to make a mixed doc meaningful
 MIN_PARAGRAPHS = 2
+CHECKPOINT_COLUMNS = ["essay_id", "intensity", "n_paragraphs", "n_revised", "paragraphs_json"]
 
 PROMPTS: dict[str, str] = {
     "grammar": (
@@ -105,28 +106,6 @@ def polish_essay(
     return results
 
 
-def load_checkpoint(checkpoint_path: Path) -> pd.DataFrame:
-    if checkpoint_path.exists():
-        return pd.read_parquet(checkpoint_path)
-    return pd.DataFrame(
-        columns=[
-            "essay_id",
-            "intensity",
-            "n_paragraphs",
-            "n_revised",
-            "paragraphs_json",
-        ]
-    )
-
-
-def append_checkpoint(checkpoint_path: Path, row: dict) -> None:
-    existing = load_checkpoint(checkpoint_path)
-    updated = pd.concat([existing, pd.DataFrame([row])], ignore_index=True)
-    tmp_path = checkpoint_path.with_suffix(".parquet.tmp")
-    updated.to_parquet(tmp_path, index=False)
-    tmp_path.replace(checkpoint_path)
-
-
 def run(config: RedlineConfig, target_n: int | None = None) -> None:
     joined_path = config.paths.interim / "daigt_persuade_joined.parquet"
     if not joined_path.exists():
@@ -148,7 +127,7 @@ def run(config: RedlineConfig, target_n: int | None = None) -> None:
     selected["essay_id"] = selected["text_hash"]
     selected["intensity"] = intensities
 
-    done = set(load_checkpoint(checkpoint_path)["essay_id"])
+    done = set(load_checkpoint(checkpoint_path, CHECKPOINT_COLUMNS)["essay_id"])
     remaining = selected[~selected["essay_id"].isin(done)]
     logger.info(
         "Polish run: %d target, %d already done, %d remaining.",
@@ -188,7 +167,7 @@ def run(config: RedlineConfig, target_n: int | None = None) -> None:
                 ]
             ),
         }
-        append_checkpoint(checkpoint_path, checkpoint_row)
+        append_checkpoint(checkpoint_path, checkpoint_row, CHECKPOINT_COLUMNS)
         logger.info(
             "[%d/%d] polished essay_id=%s intensity=%s (%d/%d paragraphs revised)",
             i,
@@ -199,7 +178,7 @@ def run(config: RedlineConfig, target_n: int | None = None) -> None:
             checkpoint_row["n_paragraphs"],
         )
 
-    n_total = len(load_checkpoint(checkpoint_path))
+    n_total = len(load_checkpoint(checkpoint_path, CHECKPOINT_COLUMNS))
     logger.info("Polish run complete. %d essays in checkpoint.", n_total)
 
 
