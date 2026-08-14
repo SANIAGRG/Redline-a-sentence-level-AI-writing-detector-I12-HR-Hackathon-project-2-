@@ -1,0 +1,20 @@
+{
+  "n": 100,
+  "mean_original_score": 0.784499757264505,
+  "mean_attacked_score": 0.7054921313750788,
+  "mean_degradation": 0.07900762588942635,
+  "typo": {
+    "n": 50,
+    "mean_original_score": 0.7901275379726477,
+    "mean_attacked_score": 0.7047996879399223,
+    "mean_degradation": 0.0853278500327251,
+    "n_flipped_below_0.5": 8
+  },
+  "paraphrase": {
+    "n": 50,
+    "mean_original_score": 0.7788719765563623,
+    "mean_attacked_score": 0.7061845748102347,
+    "mean_degradation": 0.0726874017461276,
+    "n_flipped_below_0.5": 7
+  }
+}

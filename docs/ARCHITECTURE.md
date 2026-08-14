@@ -61,5 +61,27 @@ go/no-go threshold, so ELLIPSE was not downloaded.
   stylometric feature layer (`src/detector/features/stylometric.py`).
   See `docs/DATA_CARD.md` for the sampling story, including a real
   topic-skew bug found and fixed via topic-stratified sampling.
-- Modules 3B/3C, 4-7: not started. (3A, the polish corpus, was
-  completed early in Module 1 per H3.)
+- **Module 3 (done):** 3A (polish corpus, completed early in Module 1
+  per H3) had a real preamble-contamination bug found and fixed during
+  the required sentence-alignment spot-check. 3B (modern-generator
+  slice) and 3C (adversarial set) built, resumability-verified, and run
+  -- 3B capped at n=45 under the deadline (ADR 0008), 3C completed in
+  full (100/100).
+- **Module 4 (done, deadline-scoped):** likelihood signals
+  (`src/detector/features/likelihood.py`, Qwen2.5-0.5B base+instruct)
+  and corpus-relative z-scoring (`corpus_relative.py`). Pool sizes cut
+  well below the original plan after benchmarking real throughput --
+  see ADR 0008 and `docs/LIMITATIONS.md`. Sentences sampled (3/document,
+  stratified early/mid/late), not scored exhaustively.
+- **Module 5 (done, deadline-scoped):** `src/detector/model/{train,
+  evaluate,analysis}.py` -- L2-regularised logistic regression only (no
+  LightGBM comparison), isotonic-calibrated with a sigmoid fallback for
+  small pools, TPR@1%FPR operating point (ADR 0011), bias audit with
+  Wilson confidence intervals, confidently-wrong-essay search.
+- **Module 6 (done, deadline-scoped):** `src/detector/explain/
+  evidence.py` (tested independently of the UI) + `src/detector/app/
+  main.py` (Gradio). No sample-essay picker (spec's own cut list).
+- **Module 7 (in progress):** this document, `docs/DATA_CARD.md`,
+  `docs/LIMITATIONS.md`, `docs/EVALUATION.md`, `docs/AI_USAGE.md`,
+  `README.md`, and 12 ADRs (`docs/adr/`) written progressively rather
+  than reconstructed at the end.
