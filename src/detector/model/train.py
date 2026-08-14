@@ -16,7 +16,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 from detector.config import RedlineConfig, load_config
-from detector.model.build_training_frame import Z_COLS, build_zscored_frame
+from detector.features.corpus_relative import build_baseline_stats
+from detector.model.build_training_frame import ALL_FEATURE_COLS, Z_COLS, build_zscored_frame
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -58,6 +59,22 @@ def run(config: RedlineConfig) -> None:
     test_acc = calibrated.score(X_test, y_test)
     logger.info("Train accuracy: %.3f, held-out test accuracy: %.3f", train_acc, test_acc)
 
+    # Baseline z-scoring stats + a plain (uncalibrated) LR fit for
+    # interpretable coefficients -- both bundled into the saved model so
+    # the live app (detector/explain/evidence.py) can score a pasted
+    # essay from the committed .joblib alone, without needing the
+    # gitignored dataset/features/*.parquet + dataset/interim/*.parquet
+    # files a fresh clone won't have. Fit on the same TRAIN_POOLS-scoped
+    # `trainable` rows as the real model -- previously this coefficient
+    # fit used every labelled pool unscoped, the same leakage bug class
+    # fixed for the real training split above.
+    baseline = frame[frame["pool"] == "baseline"]
+    baseline_stats = build_baseline_stats(baseline, ALL_FEATURE_COLS)
+    baseline_means = baseline[ALL_FEATURE_COLS].mean()
+
+    plain_model = LogisticRegression(penalty="l2", C=1.0, max_iter=1000, random_state=config.sampling.seed)
+    plain_model.fit(X, y)
+
     out_dir = config.paths.features.parent / "model"
     out_dir.mkdir(parents=True, exist_ok=True)
     joblib.dump(
@@ -67,6 +84,10 @@ def run(config: RedlineConfig) -> None:
             "test_index": list(idx_test),
             "train_index": list(idx_train),
             "seed": config.sampling.seed,
+            "baseline_stats": baseline_stats,
+            "baseline_means": baseline_means,
+            "plain_coef": plain_model.coef_[0],
+            "raw_feature_cols": ALL_FEATURE_COLS,
         },
         out_dir / "logistic_regression.joblib",
     )

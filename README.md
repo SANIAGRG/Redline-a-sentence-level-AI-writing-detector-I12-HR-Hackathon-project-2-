@@ -24,6 +24,21 @@ make setup      # creates .venv, installs deps, downloads spaCy + nltk data
 make app        # launches the Gradio interface
 ```
 
+**No `make`?** It isn't installed by default on Windows (no bundled `make`, and Git Bash
+doesn't include one either) — run the same two steps directly instead:
+
+```bash
+python -m venv .venv
+.venv/Scripts/pip install -e .[dev]              # .venv/bin/pip on macOS/Linux
+.venv/Scripts/python -m spacy download en_core_web_sm
+.venv/Scripts/python -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')"
+.venv/Scripts/python -m detector.app.main
+```
+
+The trained model ships committed in the repo (`dataset/model/logistic_regression.joblib`,
+~4KB) specifically so this works immediately — no need to run the generation pipeline
+first just to see the app.
+
 Paste an essay (150+ words) into the left panel, click **Analyse**. The right panel shows
 the document-level probability with an uncertainty band, a sentence-by-sentence heat map,
 and the evidence table behind the score.
@@ -37,8 +52,11 @@ make join sample generate manifests stylometric   # data pipeline
 make train eval                                    # model
 ```
 
-Ollama must be running locally for the generation step (`ollama serve`, models
-`llama3.2:3b` / `gemma2:2b` / `phi3.5:3.8b` pulled) — see `docs/ARCHITECTURE.md`.
+(Or the equivalent `python -m detector.X.Y` commands listed in each `Makefile` target, if
+`make` isn't available.) Ollama must be running locally for the generation step
+(`ollama serve`, models `llama3.2:3b` / `gemma2:2b` / `phi3.5:3.8b` pulled) — see
+`docs/ARCHITECTURE.md`. This step takes hours (H3); the committed model means it is not
+required to see the app work.
 
 ## Honest summary of results
 

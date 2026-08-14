@@ -10,19 +10,11 @@ from dataclasses import dataclass, field
 
 import joblib
 import numpy as np
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
 
 from detector.config import RedlineConfig, load_config
 from detector.features.likelihood import _all_sentences, compute_document_likelihood
 from detector.features.stylometric import compute_document_features
-from detector.model.build_training_frame import (
-    ALL_FEATURE_COLS,
-    LIKELIHOOD_COLS,
-    STYLOMETRIC_COLS,
-    Z_COLS,
-    build_zscored_frame,
-)
+from detector.model.build_training_frame import ALL_FEATURE_COLS, LIKELIHOOD_COLS, STYLOMETRIC_COLS
 
 MIN_WORDS_FOR_VERDICT = 150
 
@@ -91,40 +83,21 @@ _CACHE: dict = {}
 def _load_bundle(config: RedlineConfig) -> dict:
     if "bundle" not in _CACHE:
         model_path = config.paths.features.parent / "model" / "logistic_regression.joblib"
+        if not model_path.exists():
+            raise FileNotFoundError(
+                f"No trained model at {model_path}. It should ship committed with the repo "
+                "(dataset/model/logistic_regression.joblib) -- if it's missing, either the "
+                "clone is incomplete or `make train` needs to be run first."
+            )
         _CACHE["bundle"] = joblib.load(model_path)
     return _CACHE["bundle"]
 
 
-def _load_baseline_stats(config: RedlineConfig) -> pd.DataFrame:
-    if "baseline_stats" not in _CACHE:
-        from detector.features.corpus_relative import build_baseline_stats
-
-        frame = build_zscored_frame(config)  # also warms full frame cache below
-        _CACHE["full_frame"] = frame
-        baseline = frame[frame["pool"] == "baseline"]
-        _CACHE["baseline_stats"] = build_baseline_stats(baseline, ALL_FEATURE_COLS)
-        _CACHE["baseline_means"] = baseline[ALL_FEATURE_COLS].mean()
-    return _CACHE["baseline_stats"]
-
-
-def _plain_coefficients(config: RedlineConfig) -> np.ndarray:
-    """A plain (uncalibrated) LogisticRegression fit on the same data,
-    purely so we have interpretable coefficients for the evidence panel
-    -- CalibratedClassifierCV wraps the estimator, making coef_ access
-    awkward under time pressure. The calibrated model still produces the
-    actual probability shown to the user.
-    """
-    if "coefs" not in _CACHE:
-        frame = _CACHE.get("full_frame")
-        if frame is None:
-            frame = build_zscored_frame(config)
-        trainable = frame[frame["label"].isin([0, 1])]
-        X = trainable[Z_COLS].fillna(0.0).values
-        y = trainable["label"].values
-        lr = LogisticRegression(penalty="l2", C=1.0, max_iter=1000)
-        lr.fit(X, y)
-        _CACHE["coefs"] = lr.coef_[0]
-    return _CACHE["coefs"]
+# Baseline z-scoring stats, baseline means, and plain (uncalibrated)
+# LR coefficients are computed once at train time (detector/model/train.py)
+# and bundled into the committed .joblib -- so the live app only ever
+# needs that one file, not the gitignored dataset/features/*.parquet +
+# dataset/interim/*.parquet a fresh clone won't have.
 
 
 def analyze_essay(text: str, config: RedlineConfig | None = None) -> EssayAnalysis:
@@ -139,9 +112,9 @@ def analyze_essay(text: str, config: RedlineConfig | None = None) -> EssayAnalys
         )
 
     bundle = _load_bundle(config)
-    baseline_stats = _load_baseline_stats(config)
-    baseline_means = _CACHE["baseline_means"]
-    coefs = _plain_coefficients(config)
+    baseline_stats = bundle["baseline_stats"]
+    baseline_means = bundle["baseline_means"]
+    coefs = bundle["plain_coef"]
 
     stylo = compute_document_features("live", text)
     stylo_dict = stylo.__dict__

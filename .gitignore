@@ -25,7 +25,12 @@ dataset/features/
 .resumability_test.log
 ollama_pull.log
 
-# Model artifacts
+# Model artifacts -- except the shipped logistic regression itself
+# (dataset/model/logistic_regression.joblib, ~4KB), committed on purpose
+# so `make app` / `python -m detector.app.main` works right after
+# `make setup`, per the README's quickstart, without requiring anyone
+# to first run the multi-hour generation pipeline.
 *.pt
 *.pkl
 *.joblib
+!dataset/model/logistic_regression.joblib
