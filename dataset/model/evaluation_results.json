@@ -1,0 +1,21 @@
+{
+  "in_distribution": {
+    "n": 10,
+    "auc": 1.0,
+    "tpr_at_1pct_fpr": 1.0,
+    "threshold_at_1pct_fpr": 0.8126152878023752,
+    "brier_score": 0.008058317302349951
+  },
+  "held_out_family": {
+    "n": 19,
+    "auc": 0.963157894736842,
+    "tpr_at_fixed_in_dist_threshold": 0.631578947368421,
+    "per_generator_breakdown": "omitted -- n too small per generator to support it (see EVALUATION.md)"
+  },
+  "modern_generators": {
+    "n": 45,
+    "auc": 0.9955555555555555,
+    "tpr_at_fixed_in_dist_threshold": 0.5777777777777777,
+    "per_generator_breakdown": "omitted -- n too small per generator to support it (see EVALUATION.md)"
+  }
+}

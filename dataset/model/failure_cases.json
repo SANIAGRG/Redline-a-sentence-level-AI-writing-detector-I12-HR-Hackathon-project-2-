@@ -1,0 +1,23 @@
+[
+  {
+    "doc_id": "falcon_180b_v1::39573",
+    "pool": "machine_heldout",
+    "true_label": "machine",
+    "predicted_score": 0.0,
+    "ell_status": "n/a"
+  },
+  {
+    "doc_id": "llama3-2-3b_030",
+    "pool": "modern_gen",
+    "true_label": "machine",
+    "predicted_score": 0.09913346774695014,
+    "ell_status": "n/a"
+  },
+  {
+    "doc_id": "falcon_180b_v1::35542",
+    "pool": "machine_heldout",
+    "true_label": "machine",
+    "predicted_score": 0.16666666666666666,
+    "ell_status": "n/a"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "full_model": 1.0,
+  "without_likelihood_all": 1.0,
+  "without_cross_ppl_ratio": 1.0,
+  "without_punctuation_construction": 1.0,
+  "without_error_rates": 1.0,
+  "without_concreteness": 1.0
+}

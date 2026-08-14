@@ -1,0 +1,21 @@
+{
+  "Yes": {
+    "n": 3,
+    "fpr": 0.0,
+    "ci_95": [
+      0.0,
+      0.5615060804490177
+    ],
+    "flagged": 0
+  },
+  "No": {
+    "n": 2,
+    "fpr": 0.0,
+    "ci_95": [
+      0.0,
+      0.6576280471103807
+    ],
+    "flagged": 0
+  },
+  "_note": "Sample sizes here are tiny (deadline pool cut, ADR 0008) -- confidence intervals are correspondingly wide. Read the interval, not just the point estimate."
+}
