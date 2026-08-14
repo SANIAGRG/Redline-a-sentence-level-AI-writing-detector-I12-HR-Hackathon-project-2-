@@ -8,6 +8,8 @@ cut list).
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 import gradio as gr
 
 from detector.explain.evidence import EssayAnalysis, analyze_essay
@@ -92,7 +94,11 @@ def build_app() -> gr.Blocks:
                 heat_out = gr.HTML()
                 evidence_out = gr.Markdown()
 
-        analyze_btn.click(
+        # Gradio's type stubs inconsistently expose Button.click across
+        # versions (unpinned dependency) -- cast to Any rather than an
+        # ignore-comment, which would flip between needed and unused
+        # depending on which gradio version happens to install.
+        cast(Any, analyze_btn).click(
             fn=run_analysis, inputs=[text_input], outputs=[header_out, heat_out, evidence_out]
         )
 

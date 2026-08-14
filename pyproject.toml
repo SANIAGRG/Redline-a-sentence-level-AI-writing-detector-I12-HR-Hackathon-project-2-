@@ -17,6 +17,8 @@ dependencies = [
     "pydantic",
     "pydantic-settings",
     "pandas",
+    "numpy",
+    "joblib",
     "pyarrow",
     "matplotlib",
     "PyYAML",
