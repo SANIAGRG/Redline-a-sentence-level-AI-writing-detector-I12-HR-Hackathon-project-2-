@@ -1,8 +1,10 @@
 # Redline
 
-Redline reads an admissions essay and flags it sentence by sentence, showing which parts
-look machine-written or machine-polished and exactly which measurable signals fired on
-each one — not a bare "87% AI" number with nothing behind it.
+Redline reads an admissions essay and returns a document-level, calibrated probability
+that it's machine-written or machine-polished — not a bare "87% AI" number with nothing
+behind it. Alongside that score, a per-sentence heat map surfaces which passages carry the
+strongest likelihood signal, and an evidence table shows exactly which measurable features
+contributed to the document's score and by how much.
 
 **The honest headline, first:** on the generators it was trained on, Redline catches
 essentially all of them at its 1%-false-positive operating point. On a generator family

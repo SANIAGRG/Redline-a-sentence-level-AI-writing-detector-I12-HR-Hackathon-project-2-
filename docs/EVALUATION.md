@@ -70,21 +70,6 @@ run's much smaller pools were drawn with the same topic-stratified
 method, so the same alignment property holds, though not independently
 re-measured at this sample size.
 
-**This drop is the finding, not a bug** (spec's own framing) -- AUC
-stays high in both out-of-distribution conditions (ranking quality is
-preserved), but TPR at the in-distribution-calibrated threshold falls
-substantially. That gap between "still ranks correctly" and "still
-catches the same fraction at a fixed threshold" is itself informative:
-it says the *scores* shift for out-of-distribution generators even
-though their relative ordering doesn't, which is exactly what a
-threshold calibrated on 2023-era in-distribution data would miss.
-Accuracy and AUC are reported above as secondary numbers, per ADR 0011
--- not the operating point itself.
-
-**Read every number in this table against the tiny n.** These are
-directional findings from a compute-scoped run, not stable population
-estimates -- see `docs/LIMITATIONS.md`.
-
 ## 4. Calibration curve and Brier score
 
 Brier score (in-distribution held-out split, n=10): **0.0077** -- very

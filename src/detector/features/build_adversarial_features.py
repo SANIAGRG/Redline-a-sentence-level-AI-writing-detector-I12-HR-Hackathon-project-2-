@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 LIKELIHOOD_COLS = [
     "mean_logprob",
-    "mean_lograsnk",
+    "mean_logrank",
     "lrr",
     "mean_entropy",
     "mean_curvature",

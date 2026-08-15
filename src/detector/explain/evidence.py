@@ -39,7 +39,7 @@ FEATURE_DESCRIPTIONS: dict[str, str] = {
     "numeral_rate": "Numeral density",
     "named_entity_rate": "Named-entity density",
     "mean_logprob": "Average model log-probability of the observed words",
-    "mean_lograsnk": "Average rank of observed words in the model's predicted distribution",
+    "mean_logrank": "Average rank of observed words in the model's predicted distribution",
     "lrr": "Log-likelihood / log-rank ratio",
     "mean_entropy": "Model's uncertainty at each word position",
     "mean_curvature": "Conditional probability curvature (Fast-DetectGPT signal)",

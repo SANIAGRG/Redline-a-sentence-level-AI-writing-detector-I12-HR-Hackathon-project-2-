@@ -58,7 +58,7 @@ class SentenceLikelihoodFeatures:
     sentence_index: int
     text: str
     mean_logprob: float
-    mean_lograsnk: float
+    mean_logrank: float
     lrr: float
     mean_entropy: float
     mean_curvature: float
@@ -181,11 +181,11 @@ def compute_document_likelihood(
         )
 
         mean_logprob = sum(logprobs) / len(logprobs)
-        mean_lograsnk = sum(math.log(r) for r in ranks) / len(ranks)
+        mean_logrank = sum(math.log(r) for r in ranks) / len(ranks)
         mean_entropy = sum(entropies) / len(entropies)
         mean_curvature = sum(lp + e for lp, e in zip(logprobs, entropies, strict=True)) / len(logprobs)
         variance = sum((lp - mean_logprob) ** 2 for lp in logprobs) / len(logprobs)
-        lrr = mean_logprob / mean_lograsnk if mean_lograsnk else 0.0
+        lrr = mean_logprob / mean_logrank if mean_logrank else 0.0
 
         if instruct_logprobs:
             mean_instruct_logprob = sum(instruct_logprobs) / len(instruct_logprobs)
@@ -202,7 +202,7 @@ def compute_document_likelihood(
                 sentence_index=cand.sentence_index,
                 text=cand.text,
                 mean_logprob=mean_logprob,
-                mean_lograsnk=mean_lograsnk,
+                mean_logrank=mean_logrank,
                 lrr=lrr,
                 mean_entropy=mean_entropy,
                 mean_curvature=mean_curvature,

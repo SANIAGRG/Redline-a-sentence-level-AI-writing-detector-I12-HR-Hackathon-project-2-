@@ -21,7 +21,7 @@ from detector.features.corpus_relative import build_baseline_stats, zscore_featu
 
 LIKELIHOOD_COLS = [
     "mean_logprob",
-    "mean_lograsnk",
+    "mean_logrank",
     "lrr",
     "mean_entropy",
     "mean_curvature",
