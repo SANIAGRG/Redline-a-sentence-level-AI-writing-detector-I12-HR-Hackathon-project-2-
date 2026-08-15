@@ -2,8 +2,8 @@
 
 ## Context
 
-This build ran on CPU-only, 4-core consumer hardware, no GPU, inside a
-fixed build window ending at midnight on 2026-08-14. At 18:11 that day,
+This build ran in a CPU-only environment without GPU acceleration,
+inside a fixed build window ending at midnight on 2026-08-14. At 18:11 that day,
 with Modules 4-7 still ahead, the modern-generator run (Module 3B) had
 produced 34/150 essays after ~6 hours of generation (~3.3 min/essay at
 this hardware's throughput). At that rate, the remaining 116 essays

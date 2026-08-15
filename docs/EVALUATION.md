@@ -28,8 +28,8 @@ Accuracy and AUC are reported above as secondary numbers, per ADR 0011
 **Read every number in this table against the tiny n.** These are
 directional findings, not stable population estimates.
 
-Redline was built against a CPU-only, 4-core consumer laptop, and every
-pool size in this document reflects where that compute was spent, not
+Redline was built in a CPU-only environment without GPU acceleration,
+and every pool size in this document reflects where that compute was spent, not
 what went wrong -- every count is real and measured, not illustrative.
 Full reasoning behind each scoping decision: `docs/LIMITATIONS.md`'s
 "Scope and sample sizes" section and

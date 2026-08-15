@@ -62,7 +62,7 @@ required to see the app work.
 
 ## Results and scope
 
-Redline was built against a CPU-only, 4-core consumer laptop — no GPU, no cloud compute.
+Redline was built in a CPU-only environment without GPU acceleration, no cloud compute.
 Every number below reflects where that budget was spent, not what went wrong.
 
 The largest share went to the temporal-generalization experiment: scoring Redline against

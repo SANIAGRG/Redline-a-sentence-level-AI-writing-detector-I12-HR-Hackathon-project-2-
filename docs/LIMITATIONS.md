@@ -2,8 +2,8 @@
 
 ## Scope and sample sizes
 
-Built on a CPU-only, 4-core mobile processor (AMD Ryzen 5 3500U, no GPU
-acceleration), inside a fixed build window. Several counts were scoped
+Built in a CPU-only environment without GPU acceleration, inside a
+fixed build window. Several counts were scoped
 below the original plan against real, measured compute constraints --
 documented here rather than hidden. Full rationale: ADR 0008 ("Compute
 budget and sample-size decisions").
