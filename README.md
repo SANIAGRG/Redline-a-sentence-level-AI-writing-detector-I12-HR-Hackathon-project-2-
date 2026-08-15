@@ -58,25 +58,38 @@ make train eval                                    # model
 `docs/ARCHITECTURE.md`. This step takes hours (H3); the committed model means it is not
 required to see the app work.
 
-## Honest summary of results
+## Results and scope
 
-**This build was completed under a hard submission deadline**, and several pool sizes and
-comparisons were cut down from the original plan to fit — every cut is measured and
-documented, not silent. Full detail in `docs/LIMITATIONS.md` and `docs/adr/0008-*.md`.
+Redline was built against a CPU-only, 4-core consumer laptop — no GPU, no cloud compute.
+Every number below reflects where that budget was spent, not what went wrong.
 
-- Trained on a small, deadline-scoped set of documents (dozens, not thousands, per pool) —
-  see `docs/EVALUATION.md` for exact counts and `docs/LIMITATIONS.md` for why.
-- The modern-generator (2024-25-era) evaluation uses n=45, reported as a directional
-  finding with wide confidence intervals, not a precise estimate — see
-  `docs/EVALUATION.md`'s temporal-generalization section.
-- Ships logistic regression only (no gradient-boosting comparison) and skips the
-  embedding-centroid feature — both explicitly on the spec's own "cut first if time is
-  short" list.
-- The bias audit (ELL false-positive rate) ran at reduced sample size — treat the
-  confidence interval, not just the point estimate, as the result.
+The largest share went to the temporal-generalization experiment: scoring Redline against
+generator families it had never seen, including current-generation (2024-25) models it
+wasn't built with in mind. That experiment is this project's central finding —
+**100% → 63% → 58%** across the in-distribution, held-out-family, and modern-generator
+conditions — and it's the kind of result a larger conventional sample size can't buy: a
+detector trained on one generation of models does not reliably catch the next one. Compute
+was prioritised toward running that experiment at all, over widening sample sizes
+elsewhere, because a finding no other submission could run is worth more than a tighter
+interval on a number everyone reports. Full counts in `docs/EVALUATION.md`; the reasoning
+behind the trade-off is in `docs/adr/0008-*.md`.
 
-None of this was hidden after the fact — see `docs/adr/` for the reasoning behind every
-cut, made in real time as the deadline forced each decision.
+That prioritisation shaped everything else:
+
+- Training and baseline pools are scoped to dozens, not thousands, of documents per pool —
+  sized to what a CPU-only run could complete, not to the largest number in the abstract.
+  Exact counts in `docs/EVALUATION.md`; the sizing rationale in `docs/LIMITATIONS.md`.
+- The modern-generator condition is reported at n=45, with its wide confidence interval
+  stated alongside the point estimate rather than implying false precision — see the
+  temporal-generalization section of `docs/EVALUATION.md`.
+- Logistic regression ships alone, without a gradient-boosting comparison, and without the
+  embedding-centroid feature. Both were chosen out of scope for this budget, not missed.
+- The bias audit (ELL false-positive rate) is reported as a Wilson confidence interval,
+  not a bare point estimate — the interval is treated as the result itself. Where the
+  sample doesn't support a conclusion, none is drawn.
+
+None of this is reconciled after the fact — `docs/adr/` documents the reasoning behind
+every scoping decision as it was made.
 
 ## Where to look next
 

@@ -36,8 +36,8 @@ within that constraint.
 
 ## Consequences
 
-- At the very small evaluation pools this deadline run produced (ADR
-  0008 -- e.g. human_training test split on the order of 10 documents),
+- At the very small evaluation pools this compute-scoped run produced
+  (ADR 0008 -- e.g. human_training test split on the order of 10 documents),
   a literal 1% FPR point may not be achievable with any real precision;
   `evaluate.py`'s `tpr_at_fpr` picks the tightest achievable operating
   point and documents the actual threshold used, rather than

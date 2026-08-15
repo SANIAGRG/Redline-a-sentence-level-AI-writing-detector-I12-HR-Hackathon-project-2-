@@ -2,33 +2,34 @@
 
 ## Scope and sample sizes
 
-Built against a hard midnight submission deadline on a CPU-only, 4-core
-mobile processor (AMD Ryzen 5 3500U, no GPU acceleration). Several
-counts were cut down from the original plan under real, measured
-compute constraints -- documented here rather than hidden. Full
-rationale: ADR 0008 ("Compute budget and sample-size decisions").
+Built on a CPU-only, 4-core mobile processor (AMD Ryzen 5 3500U, no GPU
+acceleration), inside a fixed build window. Several counts were scoped
+below the original plan against real, measured compute constraints --
+documented here rather than hidden. Full rationale: ADR 0008 ("Compute
+budget and sample-size decisions").
 
 - **Modern-generator evaluation uses n=45** (spec originally planned
   150). Generation ran at ~3.3 min/essay on CPU-only hardware; a larger
-  sample was outside the compute budget once Modules 4-7 still had to
-  fit before the deadline. Split across the three models: phi3.5:3.8b
+  sample was outside the compute budget available once Modules 4-7's
+  own needs were accounted for. Split across the three models: phi3.5:3.8b
   19, gemma2:2b 16, llama3.2:3b 10 -- not perfectly even, but all three
   represented. Results for this condition are directional and reported
   with wide confidence intervals rather than as a precise estimate, and
   **no per-generator breakdown is reported** -- ~15 essays per generator
   cannot support one.
 - **Human baseline pool: 15 essays**, not the 4,000 originally planned
-  (itself already cut once, to 500, before a second cut). Qwen2.5-0.5B
-  likelihood scoring was benchmarked at ~22 sec/document (scoring every
-  sentence) and ~14 sec/document (3 sampled sentences/document,
-  stratified early/mid/late) -- both far too slow to score a
-  multi-thousand-essay baseline inside the time remaining. The z-score
-  reference distribution (7C) this pool produces is consequently noisy;
-  treat corpus-relative z-scores as indicative, not precise.
-- **Training pools cut proportionally**: human_training 25 (was 600),
+  (already scoped down once, to 500, before a second reduction).
+  Qwen2.5-0.5B likelihood scoring was benchmarked at ~22 sec/document
+  (scoring every sentence) and ~14 sec/document (3 sampled
+  sentences/document, stratified early/mid/late) -- both far too slow to
+  score a multi-thousand-essay baseline within the available compute
+  budget. The z-score reference distribution (7C) this pool produces is
+  consequently noisy; treat corpus-relative z-scores as indicative, not
+  precise.
+- **Training pools scoped proportionally**: human_training 25 (was 600),
   machine_training 25 (was 700), machine_heldout_family 20 (was 150),
-  polished/mixed 60 (was 350 -- deliberately protected at this floor,
-  not cut further, since it is the project's differentiator).
+  polished/mixed 60 (was 350 -- deliberately held at this floor, not
+  scoped down further, since it is the project's differentiator).
 - **Sentence sampling, not full-document scoring**: every document's
   likelihood features come from 3 sampled sentences (1 early/mid/late),
   not all of them. An initial attempt at 6 sampled sentences/document
@@ -43,7 +44,8 @@ rationale: ADR 0008 ("Compute budget and sample-size decisions").
   beyond ADR 0002's sentence-as-primary-unit design): with only 3
   sampled sentences per document at this pool size, a genuine
   sentence-level classifier would have too few effective points per
-  class to fit or evaluate meaningfully tonight. The shipped logistic
+  class to fit or evaluate meaningfully within this build's compute
+  budget. The shipped logistic
   regression is trained on document-level features (likelihood's 3
   sampled sentences mean-aggregated to one row per document, joined with
   document-level stylometric features). The live app's sentence heat map

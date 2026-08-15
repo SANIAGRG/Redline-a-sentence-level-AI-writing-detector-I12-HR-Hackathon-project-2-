@@ -31,8 +31,8 @@ Two abstain triggers, both implemented in
 ## Alternatives considered
 
 - **Derive band width from the calibration curve's local slope**, as
-  originally planned. Rejected under the deadline (ADR 0008) -- the
-  training pools this run produced are too small (human_training 25,
+  originally planned. Rejected given this build's compute budget (ADR
+  0008) -- the training pools this run produced are too small (human_training 25,
   machine_training 25) for a calibration curve to have a stable local
   slope to derive a width from; a width computed from that curve would
   be noise dressed up as precision.

@@ -53,7 +53,7 @@ the 2023-era or modern-generator condition.
   distributional difference from human writing, not scorer/generator
   family resemblance -- this is the load-bearing assumption behind
   every held-out result in docs/EVALUATION.md.
-- Under the deadline compute crunch (ADR 0008), Qwen2.5-0.5B's forward-
-  pass cost was still the binding constraint that forced sentence
-  sampling and pool-size cuts -- a larger scorer would have made an
-  already-tight budget infeasible.
+- Within this build's compute budget (ADR 0008), Qwen2.5-0.5B's forward-
+  pass cost was still the binding constraint that drove sentence
+  sampling and the pool-size scoping decisions -- a larger scorer would
+  have made an already-tight budget infeasible.

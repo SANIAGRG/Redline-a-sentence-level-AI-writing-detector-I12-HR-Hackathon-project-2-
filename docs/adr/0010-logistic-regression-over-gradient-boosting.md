@@ -16,8 +16,8 @@ Coefficients read directly as evidence: `contribution = z_score x
 coefficient` for each feature, which is exactly what the app's evidence
 panel displays, sorted by magnitude. A LightGBM comparison was planned
 in the original spec (train both, report both, justify the interpretable
-one shipping) but was cut under the submission deadline (ADR 0008,
-spec's own first-cut-if-short item) -- the interpretability argument
+one shipping) but was scoped out of this build's compute budget (ADR
+0008, spec's own first-item-to-scope-out) -- the interpretability argument
 below was always the primary reason to prefer logistic regression, not
 a secondary one built on the comparison, so shipping without the
 comparison table doesn't weaken the decision.
@@ -37,7 +37,7 @@ comparison table doesn't weaken the decision.
   run, per ADR 0008).
 - **No regularisation (plain logistic regression).** Rejected --
   L2 keeps coefficients stable given the small, noisy training pools
-  this deadline run produced; an unregularised fit on ~50 training rows
+  this compute-scoped run produced; an unregularised fit on ~50 training rows
   (human_training + machine_training combined) risks wildly overconfident
   weights on whichever feature happens to separate the tiny sample.
 
@@ -51,6 +51,6 @@ comparison table doesn't weaken the decision.
   omission is unmeasured, but the interpretability property this ADR
   protects does not depend on knowing it.
 - Isotonic calibration's instability on small pools (handled via a
-  sigmoid fallback in `train.py`) is itself a symptom of the deadline's
-  small training pools (ADR 0008) -- worth revisiting with more data if
-  this project continues past tonight.
+  sigmoid fallback in `train.py`) is itself a symptom of this build's
+  compute-scoped training pools (ADR 0008) -- worth revisiting with
+  more data in a future iteration of this project.

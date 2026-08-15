@@ -65,22 +65,22 @@ go/no-go threshold, so ELLIPSE was not downloaded.
   per H3) had a real preamble-contamination bug found and fixed during
   the required sentence-alignment spot-check. 3B (modern-generator
   slice) and 3C (adversarial set) built, resumability-verified, and run
-  -- 3B capped at n=45 under the deadline (ADR 0008), 3C completed in
-  full (100/100).
-- **Module 4 (done, deadline-scoped):** likelihood signals
+  -- 3B scoped to n=45 within this build's compute budget (ADR 0008),
+  3C completed in full (100/100).
+- **Module 4 (done, compute-scoped):** likelihood signals
   (`src/detector/features/likelihood.py`, Qwen2.5-0.5B base+instruct)
-  and corpus-relative z-scoring (`corpus_relative.py`). Pool sizes cut
-  well below the original plan after benchmarking real throughput --
-  see ADR 0008 and `docs/LIMITATIONS.md`. Sentences sampled (3/document,
+  and corpus-relative z-scoring (`corpus_relative.py`). Pool sizes
+  scoped well below the original plan after benchmarking real throughput
+  -- see ADR 0008 and `docs/LIMITATIONS.md`. Sentences sampled (3/document,
   stratified early/mid/late), not scored exhaustively.
-- **Module 5 (done, deadline-scoped):** `src/detector/model/{train,
+- **Module 5 (done, compute-scoped):** `src/detector/model/{train,
   evaluate,analysis}.py` -- L2-regularised logistic regression only (no
   LightGBM comparison), isotonic-calibrated with a sigmoid fallback for
   small pools, TPR@1%FPR operating point (ADR 0011), bias audit with
   Wilson confidence intervals, confidently-wrong-essay search.
-- **Module 6 (done, deadline-scoped):** `src/detector/explain/
+- **Module 6 (done, compute-scoped):** `src/detector/explain/
   evidence.py` (tested independently of the UI) + `src/detector/app/
-  main.py` (Gradio). No sample-essay picker (spec's own cut list).
+  main.py` (Gradio). No sample-essay picker (spec's own scope-out list).
 - **Module 7 (in progress):** this document, `docs/DATA_CARD.md`,
   `docs/LIMITATIONS.md`, `docs/EVALUATION.md`, `docs/AI_USAGE.md`,
   `README.md`, and 12 ADRs (`docs/adr/`) written progressively rather

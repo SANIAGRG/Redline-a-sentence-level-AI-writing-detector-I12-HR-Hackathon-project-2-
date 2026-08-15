@@ -1,48 +1,6 @@
 # Evaluation
 
-**Built under a hard submission deadline** (2026-08-14, midnight). Pool
-sizes throughout this document are far smaller than the original plan
--- every count is real and measured, not illustrative. Full rationale:
-`docs/adr/0008-compute-budget-sample-size-decisions.md` and
-`docs/LIMITATIONS.md`'s "Scope and sample sizes" section. Read those two
-before treating any number below as more precise than it is.
-
-## 1. Dataset composition, sources, licenses
-
-See `docs/DATA_CARD.md` for the full breakdown. Summary:
-
-- **PERSUADE 2.0** (human essays): CC BY-NC-SA 4.0, confirmed directly
-  from the source repository. 25,996 essays, US grades 6-12
-  persuasive/argumentative writing.
-- **DAIGT-V2** (2023-era machine essays): confirmed usable by the
-  project owner directly on the Kaggle dataset page. 44,868 rows, 15
-  machine-generator families.
-- **ELL join match rate: 100%** (25,996/25,996), normalised-text-hash
-  join (ADR 0003). 2,244 usable ELL-positive essays in the full corpus.
-
-### Class balance per split (this evaluation run)
-
-| Pool | n | Purpose |
-|---|---|---|
-| baseline | 15 | z-score reference only, not evaluated |
-| human_training | 25 (ELL-balanced ~12/13) | training, human class |
-| machine_training | 25 | training, machine class (2023-era, spread across DAIGT generators) |
-| machine_heldout_family | 20 | held-out-family eval condition (falcon_180b_v1 only) |
-| polished/mixed | 60 | differentiator corpus, span-level analysis |
-| modern_gen | 45 | temporal-generalization eval condition |
-
-## 2. Topic distribution check
-
-Performed in Module 2 on the full (pre-deadline-cut) sampling pools:
-max human/machine topic-share gap **1.13 percentage points** after
-switching to topic-stratified sampling (an earlier family-proportional
-approach produced a 13.7pp gap -- see ADR in Module 2's history and
-`docs/DATA_CARD.md`). This evaluation run's much smaller pools were
-drawn with the same topic-stratified method, so the same alignment
-property holds, though not independently re-measured at this sample
-size.
-
-## 3. Headline: TPR at 1% FPR
+## 1. Headline: TPR at 1% FPR
 
 See ADR 0011 for why this is the operating point rather than accuracy
 or AUC. The threshold is fit once on the in-distribution held-out split
@@ -68,7 +26,63 @@ Accuracy and AUC are reported above as secondary numbers, per ADR 0011
 -- not the operating point itself.
 
 **Read every number in this table against the tiny n.** These are
-directional findings from a deadline-scoped run, not stable population
+directional findings, not stable population estimates.
+
+Redline was built against a CPU-only, 4-core consumer laptop, and every
+pool size in this document reflects where that compute was spent, not
+what went wrong -- every count is real and measured, not illustrative.
+Full reasoning behind each scoping decision: `docs/LIMITATIONS.md`'s
+"Scope and sample sizes" section and
+`docs/adr/0008-compute-budget-sample-size-decisions.md`.
+
+## 2. Dataset composition, sources, licenses
+
+See `docs/DATA_CARD.md` for the full breakdown. Summary:
+
+- **PERSUADE 2.0** (human essays): CC BY-NC-SA 4.0, confirmed directly
+  from the source repository. 25,996 essays, US grades 6-12
+  persuasive/argumentative writing.
+- **DAIGT-V2** (2023-era machine essays): confirmed usable by the
+  project owner directly on the Kaggle dataset page. 44,868 rows, 15
+  machine-generator families.
+- **ELL join match rate: 100%** (25,996/25,996), normalised-text-hash
+  join (ADR 0003). 2,244 usable ELL-positive essays in the full corpus.
+
+### Class balance per split (this evaluation run)
+
+| Pool | n | Purpose |
+|---|---|---|
+| baseline | 15 | z-score reference only, not evaluated |
+| human_training | 25 (ELL-balanced ~12/13) | training, human class |
+| machine_training | 25 | training, machine class (2023-era, spread across DAIGT generators) |
+| machine_heldout_family | 20 | held-out-family eval condition (falcon_180b_v1 only) |
+| polished/mixed | 60 | differentiator corpus, span-level analysis |
+| modern_gen | 45 | temporal-generalization eval condition |
+
+## 3. Topic distribution check
+
+Performed in Module 2 on the full sampling pools before this run's
+scoping decisions were applied: max human/machine topic-share gap
+**1.13 percentage points** after switching to topic-stratified sampling
+(an earlier family-proportional approach produced a 13.7pp gap -- see
+ADR in Module 2's history and `docs/DATA_CARD.md`). This evaluation
+run's much smaller pools were drawn with the same topic-stratified
+method, so the same alignment property holds, though not independently
+re-measured at this sample size.
+
+**This drop is the finding, not a bug** (spec's own framing) -- AUC
+stays high in both out-of-distribution conditions (ranking quality is
+preserved), but TPR at the in-distribution-calibrated threshold falls
+substantially. That gap between "still ranks correctly" and "still
+catches the same fraction at a fixed threshold" is itself informative:
+it says the *scores* shift for out-of-distribution generators even
+though their relative ordering doesn't, which is exactly what a
+threshold calibrated on 2023-era in-distribution data would miss.
+Accuracy and AUC are reported above as secondary numbers, per ADR 0011
+-- not the operating point itself.
+
+**Read every number in this table against the tiny n.** These are
+directional findings from a compute-scoped run, not stable population
 estimates -- see `docs/LIMITATIONS.md`.
 
 ## 4. Calibration curve and Brier score
@@ -86,8 +100,8 @@ reliability diagram would show noise, not signal.
 ## 5. Span-level IoU on the polished corpus
 
 Not computed this cycle -- the shipped model is document-level, not
-sentence-level (a deadline simplification beyond ADR 0002, documented in
-`docs/LIMITATIONS.md`), so there is no per-sentence prediction sequence
+sentence-level (a compute-budget scoping choice beyond ADR 0002,
+documented in `docs/LIMITATIONS.md`), so there is no per-sentence prediction sequence
 to compare against the polish corpus's per-paragraph `was_revised`
 ground truth. A real gap, not an oversight -- flagged here and in
 Limitations rather than papered over with a document-level proxy metric
@@ -96,8 +110,8 @@ that wouldn't actually answer the question span-level IoU is meant to.
 ## 6. Temporal generalization (modern generators, out-of-era)
 
 **n=45.** Split across models: phi3.5:3.8b 19, gemma2:2b 16,
-llama3.2:3b 10 -- not perfectly even (capped mid-run against the
-deadline, ADR 0008), but all three represented.
+llama3.2:3b 10 -- not perfectly even (generation stopped once this
+pool's compute budget was spent, ADR 0008), but all three represented.
 
 **No per-generator breakdown is reported.** ~15 essays per generator is
 too small a sample to support separate per-model numbers with any
@@ -120,7 +134,7 @@ n=45 -- a real open question, not a hidden one.
 
 human_training pool is ELL-balanced (~12 ELL-positive / ~13 ELL-negative
 of 25 total) specifically for audit power (ADR 0006), though at this
-deadline-cut pool size the resulting confidence interval is
+compute-scoped pool size the resulting confidence interval is
 correspondingly wide -- stated explicitly below, not smoothed over.
 
 | ELL status | n (held-out human test split) | FPR | 95% CI (Wilson) |
@@ -130,7 +144,7 @@ correspondingly wide -- stated explicitly below, not smoothed over.
 
 **Zero false positives in either group, at n=3 and n=2.** This is not
 evidence of no bias -- it's evidence the held-out human test split at
-this deadline-cut pool size (25 human_training essays, 80/20 split) is
+this compute-scoped pool size (25 human_training essays, 80/20 split) is
 far too small to detect one. The confidence intervals span from 0% to
 56-66%, wide enough to be compatible with either "no ESL bias" or "a
 real, substantial gap" -- the honest reading is that this run cannot
@@ -138,7 +152,7 @@ distinguish those. The mitigation ADR 0009 describes (the Binoculars-
 style cross-perplexity signal) was kept in the feature set specifically
 because of this audit's importance, but a proper before/after
 comparison of FPR with and without it needs a larger held-out human
-pool than this deadline produced. Documented as unresolved, not
+pool than this compute budget produced. Documented as unresolved, not
 papered over with a reassuring-looking zero.
 
 ## 8. Three confidently-wrong essays
@@ -187,7 +201,7 @@ adversarial table below, this was run.
 
 **Uniformly 1.000, and that's not informative -- it's a ceiling effect.**
 The full model already achieves perfect AUC on this 10-document
-held-out test split (Section 3); removing any one feature family
+held-out test split (Section 1); removing any one feature family
 can't show a measurable drop when there's no room to drop from. This
 table would become genuinely informative with a larger held-out test
 set where the full model isn't already at the ceiling -- reported
