@@ -64,15 +64,13 @@ Redline was built against a CPU-only, 4-core consumer laptop — no GPU, no clou
 Every number below reflects where that budget was spent, not what went wrong.
 
 The largest share went to the temporal-generalization experiment: scoring Redline against
-generator families it had never seen, including current-generation (2024-25) models it
-wasn't built with in mind. That experiment is this project's central finding —
-**100% → 63% → 58%** across the in-distribution, held-out-family, and modern-generator
-conditions — and it's the kind of result a larger conventional sample size can't buy: a
-detector trained on one generation of models does not reliably catch the next one. Compute
-was prioritised toward running that experiment at all, over widening sample sizes
-elsewhere, because a finding no other submission could run is worth more than a tighter
-interval on a number everyone reports. Full counts in `docs/EVALUATION.md`; the reasoning
-behind the trade-off is in `docs/adr/0008-*.md`.
+generator families it had never seen, including current-generation (2024-25) models.
+That experiment produced this project's central finding — **100% → 63% → 58%** across the
+in-distribution, held-out-family, and modern-generator conditions. Compute was prioritised
+toward running that experiment at all, over widening sample sizes elsewhere, because it's a
+finding that only becomes available by testing against models the training data predates —
+worth more than a tighter interval on a number everyone reports. Full counts in
+`docs/EVALUATION.md`; the reasoning behind the trade-off is in `docs/adr/0008-*.md`.
 
 That prioritisation shaped everything else:
 
